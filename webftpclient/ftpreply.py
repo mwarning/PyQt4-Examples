@@ -45,7 +45,7 @@ class FtpReply(QNetworkReply):
 
 	def processListInfo(self, urlInfo):
 		print("FtpReply.processListInfo")
-		self.items.append(urlInfo)
+		self.items.append(QUrlInfo(urlInfo))
 
 	def processData(self):
 		print("FtpReply.processData")
@@ -107,7 +107,7 @@ class FtpReply(QNetworkReply):
 			unit = 0
 			while size:
 				new_size = size/1024
-				if new_size and unit < self.units.size():
+				if new_size and unit < len(self.units):
 					size = new_size
 					unit += 1
 				else:
@@ -128,7 +128,7 @@ class FtpReply(QNetworkReply):
 		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(self.content.size()))
 		self.readyRead.emit()
 		self.finished.emit()
-		ftp.close()
+		self.ftp.close()
 
 	def abort(self):
 		print("FtpReply.abort")
