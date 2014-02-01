@@ -9,8 +9,6 @@ class FtpView(QWebView):
 	def __init__(self):
 		super(FtpView, self).__init__()
 		print("FtpView.init")
-		global newManager
-		global oldManager
 		
 		oldManager = self.page().networkAccessManager()
 		newManager = NetworkAccessManager(oldManager, self)

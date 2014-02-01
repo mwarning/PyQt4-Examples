@@ -5,8 +5,8 @@ from PyQt4.QtNetwork import *
 
 class FtpReply(QNetworkReply):
 	
-	def __init__(self, url):
-		super(FtpReply, self).__init__()
+	def __init__(self, url, parent):
+		super(FtpReply, self).__init__(parent)
 		print("FtpReply.init")
 
 		self.items = []
@@ -34,7 +34,7 @@ class FtpReply(QNetworkReply):
 		if cmd == QFtp.ConnectToHost:
 			self.ftp.login()
 		elif cmd == QFtp.Login:
-			self.ftp.list(url().path())
+			self.ftp.list(self.url().path())
 		elif cmd == QFtp.List:
 			if len(self.items) == 1:
 				self.ftp.get(url().path())
@@ -53,7 +53,7 @@ class FtpReply(QNetworkReply):
 
 	def setContent(self):
 		print("FtpReply.setContent")
-		self.open(OpenModeFlag.ReadOnly | OpenModeFlag.Unbuffered)
+		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
 		setHeader(QNetworkRequest.ContentLengthHeader, QVariant(self.content.size()))
 		self.readyRead.emit()
 		self.finished.emit()
@@ -65,10 +65,10 @@ class FtpReply(QNetworkReply):
 		if not u.path().endsWith("/"):
 			u.setPath(u.path() + "/")
 
-		base_url = url().toString()
+		base_url = self.url().toString()
 		base_path = u.path()
 
-		self.open(OpenModeFlag.ReadOnly | OpenModeFlag.Unbuffered)
+		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
 		content = QString(
 			"<html>\n"
 			"<head>\n"
@@ -87,15 +87,15 @@ class FtpReply(QNetworkReply):
 
 		parent = u.resolved(QUrl(".."))
 
-		if (parent.isParentOf(u)):
+		if parent.isParentOf(u):
 			content += QString("<tr><td><strong><a href=\"" + parent.toString() + "\">"
-				+ tr("Parent directory") + "</a></strong></td><td></td></tr>\n")
+				+ "Parent directory</a></strong></td><td></td></tr>\n")
 
 		i = 0
 		for item in self.items:
 			child = u.resolved(QUrl(item.name()))
 
-			if (i == 0):
+			if i == 0:
 				content += QString("<tr class=\"odd\">")
 			else:
 				content += QString("<tr class=\"even\">")
@@ -125,7 +125,7 @@ class FtpReply(QNetworkReply):
 		self.content = content.toUtf8()
 
 		self.setHeader(QNetworkRequest.ContentTypeHeader, QVariant("text/html; charset=UTF-8"))
-		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(this.content.size()))
+		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(self.content.size()))
 		self.readyRead.emit()
 		self.finished.emit()
 		ftp.close()

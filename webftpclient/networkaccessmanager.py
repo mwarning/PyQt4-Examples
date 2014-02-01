@@ -7,9 +7,10 @@ from ftpreply import FtpReply
 
 class NetworkAccessManager(QNetworkAccessManager):
 	
-	def __init__(self, manager, parent = None):
+	def __init__(self, manager, parent):
 		super(NetworkAccessManager, self).__init__(parent)
 		print("NetworkAccessManager.init")
+
 		self.setCache(manager.cache())
 		self.setCookieJar(manager.cookieJar())
 		self.setProxy(manager.proxy())
@@ -22,6 +23,6 @@ class NetworkAccessManager(QNetworkAccessManager):
 
 		if operation == QNetworkAccessManager.GetOperation:
 			# Handle ftp:// URLs separately by creating custom QNetworkReply objects.
-			return FtpReply(request.url())
+			return FtpReply(request.url(), self)
 		else:
 			return QNetworkAccessManager.createRequest(self, operation, request, device)
