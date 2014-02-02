@@ -54,7 +54,7 @@ class FtpReply(QNetworkReply):
 	def setContent(self):
 		print("FtpReply.setContent")
 		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
-		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(self.content.size()))
+		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
 		self.readyRead.emit()
 		self.finished.emit()
 		self.ftp.close()
