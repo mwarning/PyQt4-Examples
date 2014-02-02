@@ -24,4 +24,4 @@ class FtpView(QWebView):
 	
 	def updateWindowTitle(self, url):
 		print("FtpView.updateWindowTitle")
-		self.setWindowTitle("FTP Client - {}".format(url.toString()))
+		self.setWindowTitle("FTP Client - %s" % url.toString())

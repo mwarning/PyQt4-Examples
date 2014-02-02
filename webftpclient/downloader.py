@@ -1,6 +1,6 @@
 
-from PyQt4.QtCore import * 
-from PyQt4.QtGui import * 
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 
 
@@ -22,7 +22,7 @@ class Downloader(QObject):
 		if not path.isEmpty():
 			fileName = QDir(path).filePath(fileName)
 
-		return QFileDialog.getSaveFileName(self.parentWidget, "Save File", fileName);
+		return QFileDialog.getSaveFileName(self.parentWidget, u"Save File", fileName);
 
 	def startDownload(self, request):
 		print("Downloader.startDownload")
@@ -44,9 +44,9 @@ class Downloader(QObject):
 				file.write(reply.readAll())
 				file.close()
 				path = QDir(newPath).dirName()
-				QMessageBox.information(parentWidget, "Download Completed", QString("Saved '%1'.").arg(newPath))
+				QMessageBox.information(parentWidget, u"Download Completed", u"Saved '%s'." % newPath)
 			else:
-				QMessageBox.warning(parentWidget, "Download Failed", "Failed to save the file.")
+				QMessageBox.warning(parentWidget, u"Download Failed", u"Failed to save the file.")
 
 	def finishDownload(self):
 		print("Downloader.finishDownload")

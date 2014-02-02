@@ -1,6 +1,6 @@
 
-from PyQt4.QtCore import * 
-from PyQt4.QtNetwork import * 
+from PyQt4.QtCore import *
+from PyQt4.QtNetwork import *
 
 
 class FtpReply(QNetworkReply):
@@ -10,7 +10,7 @@ class FtpReply(QNetworkReply):
 		print("FtpReply.init")
 
 		self.items = []
-		self.content = QByteArray()
+		self.content = ""
 
 		self.ftp = QFtp(self)
 		self.ftp.listInfo.connect(self.processListInfo)
@@ -62,46 +62,45 @@ class FtpReply(QNetworkReply):
 	def setListContent(self):
 		print("FtpReply.setListContent")
 		u = self.url()
-		if not u.path().endsWith("/"):
+		if not u.path().endswith("/"):
 			u.setPath(u.path() + "/")
 
 		base_url = self.url().toString()
 		base_path = u.path()
 
 		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
-		content = QString(
-			"<html>\n"
-			"<head>\n"
-			"  <title>" + Qt.escape(base_url) + "</title>\n"
-			"  <style type=\"text/css\">\n"
-			"  th { background-color: #aaaaaa; color: black }\n"
-			"  table { border: solid 1px #aaaaaa }\n"
-			"  tr.odd { background-color: #dddddd; color: black\n }\n"
-			"  tr.even { background-color: white; color: black\n }\n"
-			"  </style>\n"
-			"</head>\n\n"
-			"<body>\n"
-			"<h1>" + QString("Listing for %1").arg(base_path) + "</h1>\n\n"
-			"<table align=\"center\" cellspacing=\"0\" width=\"90%\">\n"
-			"<tr><th>Name</th><th>Size</th></tr>\n")
+		content = (
+			u'<html>\n'
+			'<head>\n'
+			'  <title>%s</title>\n'
+			'  <style type="text/css">\n'
+			'  th { background-color: #aaaaaa; color: black }\n'
+			'  table { border: solid 1px #aaaaaa }\n'
+			'  tr.odd { background-color: #dddddd; color: black\n }\n'
+			'  tr.even { background-color: white; color: black\n }\n'
+			'  </style>\n'
+			'</head>\n\n'
+			'<body>\n'
+			'<h1>Listing for %s</h1>\n\n'
+			'<table align="center" cellspacing="0" width="90%%">\n'
+			'<tr><th>Name</th><th>Size</th></tr>\n' % (Qt.escape(base_url), base_path))
 
 		parent = u.resolved(QUrl(".."))
 
 		if parent.isParentOf(u):
-			content += QString("<tr><td><strong><a href=\"" + parent.toString() + "\">"
-				+ "Parent directory</a></strong></td><td></td></tr>\n")
+			content += (u'<tr><td><strong><a href="%s">' % parent.toString()
+			+ u'Parent directory</a></strong></td><td></td></tr>\n')
 
 		i = 0
 		for item in self.items:
 			child = u.resolved(QUrl(item.name()))
 
 			if i == 0:
-				content += QString("<tr class=\"odd\">")
+				content += u'<tr class="odd">'
 			else:
-				content += QString("<tr class=\"even\">")
+				content += u'<tr class="even">'
 
-			content += QString("<td><a href=\"" + child.toString() + "\">"
-							   + Qt.escape(item.name()) + "</a></td>")
+			content += u'<td><a href="%s">%s</a></td>' % (child.toString(),  Qt.escape(item.name()))
 
 			size = item.size()
 			unit = 0
@@ -114,18 +113,18 @@ class FtpReply(QNetworkReply):
 					break
 
 			if item.isFile():
-				content += QString("<td>" + QString.number(size) + " " + self.units[unit] + "</td></tr>\n")
+				content += u'<td>%s %s</td></tr>\n' % (str(size), self.units[unit])
 			else:
-				content += QString("<td></td></tr>\n")
+				content += u'<td></td></tr>\n'
 
 			i = 1 - i
 
-		content += QString("</table>\n</body>\n</html>\n")
+		content += u'</table>\n</body>\n</html>\n'
 
-		self.content = content.toUtf8()
+		self.content = content.encode('utf-8')
 
 		self.setHeader(QNetworkRequest.ContentTypeHeader, QVariant("text/html; charset=UTF-8"))
-		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(self.content.size()))
+		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
 		self.readyRead.emit()
 		self.finished.emit()
 		self.ftp.close()
@@ -136,7 +135,7 @@ class FtpReply(QNetworkReply):
 
 	def bytesAvailable(self):
 		print("FtpReply.bytesAvailable")
-		return self.content.size() - self.offset
+		return len(self.content) - self.offset
 
 	def isSequential(self):
 		print("FtpReply.isSequential")
@@ -144,8 +143,8 @@ class FtpReply(QNetworkReply):
 
 	def readData(self, maxSize):
 		print("FtpReply.readData")
-		if self.offset < self.content.size():
-			number = min(maxSize, self.content.size() - self.offset)
+		if self.offset < len(self.content):
+			number = min(maxSize, len(self.content) - self.offset)
 			data = self.content[self.offset:number]
 			self.offset += number
 			return str(data)
