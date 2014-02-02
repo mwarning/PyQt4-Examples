@@ -4,7 +4,7 @@ from PyQt4.QtNetwork import *
 
 
 class FtpReply(QNetworkReply):
-	
+
 	def __init__(self, url, parent):
 		super(FtpReply, self).__init__(parent)
 		print("FtpReply.init")
@@ -142,12 +142,11 @@ class FtpReply(QNetworkReply):
 		print("FtpReply.isSequential")
 		return True
 
-	def readData(self, data, maxSize):
+	def readData(self, maxSize):
 		print("FtpReply.readData")
 		if self.offset < self.content.size():
-			number = qMin(maxSize, content.size() - self.offset)
-			memcpy(data, self.content.constData() + self.offset, number)
+			number = min(maxSize, self.content.size() - self.offset)
+			data = self.content[self.offset:number]
 			self.offset += number
-			return number
-		else:
-			return -1
+			return str(data)
+		return None
