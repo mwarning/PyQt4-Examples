@@ -147,5 +147,5 @@ class FtpReply(QNetworkReply):
 			number = min(maxSize, len(self.content) - self.offset)
 			data = self.content[self.offset:number]
 			self.offset += number
-			return str(data)
+			return data
 		return None
