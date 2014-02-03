@@ -10,104 +10,104 @@ from PyQt4 import QtGui, QtCore, QtNetwork, QtWebKit
 
 class NetworkReply(QtNetwork.QNetworkReply):
 
-	def __init__(self, url, parent):
-		super(NetworkReply, self).__init__(parent)
-		print("NetworkReply.init")
+    def __init__(self, url, parent):
+        super(NetworkReply, self).__init__(parent)
+        print("NetworkReply.init")
 
-		self.content = ""
-		self.offset = 0
+        self.content = ""
+        self.offset = 0
 
-		self.setUrl(url)
+        self.setUrl(url)
 
-		timer = QtCore.QTimer(self)
-		timer.timeout.connect(self.setContent)
-		timer.start(1000)
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(self.setContent)
+        timer.start(1000)
 
-	def setContent(self):
-		print("NetworkReply.setContent")
+    def setContent(self):
+        print("NetworkReply.setContent")
 
-		content = u'<html><head><title>Test</title></head><body>'
-		for i in range(0, 100):
-			content += 'number %s<br>' % i
-		content += u'</body></html>'
+        content = u'<html><head><title>Test</title></head><body>'
+        for i in range(0, 100):
+            content += 'number %s<br>' % i
+        content += u'</body></html>'
 
-		self.content = content.encode('utf-8')
-		self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
-		self.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, QtCore.QVariant("text/html; charset=UTF-8"))
-		self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QtCore.QVariant(len(self.content)))
-		self.readyRead.emit()
-		self.finished.emit()
+        self.content = content.encode('utf-8')
+        self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
+        self.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, QtCore.QVariant("text/html; charset=UTF-8"))
+        self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QtCore.QVariant(len(self.content)))
+        self.readyRead.emit()
+        self.finished.emit()
 
-	def abort(self):
-		print("NetworkReply.abort")
-		pass
+    def abort(self):
+        print("NetworkReply.abort")
+        pass
 
-	def bytesAvailable(self):
-		print("NetworkReply.bytesAvailable: {}".format(len(self.content) - self.offset))
-		return len(self.content) - self.offset
+    def bytesAvailable(self):
+        print("NetworkReply.bytesAvailable: {}".format(len(self.content) - self.offset))
+        return len(self.content) - self.offset
 
-	def isSequential(self):
-		print("NetworkReply.isSequential")
-		return True
+    def isSequential(self):
+        print("NetworkReply.isSequential")
+        return True
 
-	def readData(self, maxSize):
-		print("NetworkReply.readData")
-		if self.offset < len(self.content):
-			number = min(maxSize, len(self.content) - self.offset)
-			data = self.content[self.offset:number]
-			self.offset += number
-			return data
-		return None
+    def readData(self, maxSize):
+        print("NetworkReply.readData")
+        if self.offset < len(self.content):
+            number = min(maxSize, len(self.content) - self.offset)
+            data = self.content[self.offset:number]
+            self.offset += number
+            return data
+        return None
 
 
 class NetworkAccessManager(QtNetwork.QNetworkAccessManager):
 
-	def __init__(self, manager, parent):
-		super(NetworkAccessManager, self).__init__(parent)
-		print("NetworkAccessManager.init")
+    def __init__(self, manager, parent):
+        super(NetworkAccessManager, self).__init__(parent)
+        print("NetworkAccessManager.init")
 
-		self.setCache(manager.cache())
-		self.setCookieJar(manager.cookieJar())
-		self.setProxy(manager.proxy())
-		self.setProxyFactory(manager.proxyFactory())
+        self.setCache(manager.cache())
+        self.setCookieJar(manager.cookieJar())
+        self.setProxy(manager.proxy())
+        self.setProxyFactory(manager.proxyFactory())
 
-	def createRequest(self, operation, request, device):
-		print("NetworkAccessManager.createRequest")
+    def createRequest(self, operation, request, device):
+        print("NetworkAccessManager.createRequest")
 
-		if operation == QtNetwork.QNetworkAccessManager.GetOperation:
-			return NetworkReply(request.url(), self)
-		else:
-			return QtNetwork.QNetworkAccessManager.createRequest(self, operation, request, device)
+        if operation == QtNetwork.QNetworkAccessManager.GetOperation:
+            return NetworkReply(request.url(), self)
+        else:
+            return QtNetwork.QNetworkAccessManager.createRequest(self, operation, request, device)
 
 
 class WebView(QtWebKit.QWebView):
-	def __init__(self):
-		super(WebView, self).__init__()
-		print("WebView.init")
+    def __init__(self):
+        super(WebView, self).__init__()
+        print("WebView.init")
 
-		oldManager = self.page().networkAccessManager()
-		newManager = NetworkAccessManager(oldManager, self)
-		self.page().setNetworkAccessManager(newManager)
+        oldManager = self.page().networkAccessManager()
+        newManager = NetworkAccessManager(oldManager, self)
+        self.page().setNetworkAccessManager(newManager)
 
-		self.page().setForwardUnsupportedContent(True)
+        self.page().setForwardUnsupportedContent(True)
 
-		self.urlChanged.connect(self.updateWindowTitle)
+        self.urlChanged.connect(self.updateWindowTitle)
 
-	def updateWindowTitle(self, url):
-		print("WebView.updateWindowTitle")
-		self.setWindowTitle("Content View - %s" % url.toString())
+    def updateWindowTitle(self, url):
+        print("WebView.updateWindowTitle")
+        self.setWindowTitle("Content View - %s" % url.toString())
 
 
 def main():
-	app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
 
-	view = WebView()
-	view.setUrl(QtCore.QUrl(u"foo://some_dummy_url"))
-	view.show()
+    view = WebView()
+    view.setUrl(QtCore.QUrl(u"foo://some_dummy_url"))
+    view.show()
 
-	sys.exit(app.exec_())
+    sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
-	main()
+    main()
 
