@@ -7,7 +7,6 @@ from networkaccessmanager import NetworkAccessManager
 class FtpView(QtWebKit.QWebView):
     def __init__(self):
         super(FtpView, self).__init__()
-        print("FtpView.init")
 
         oldManager = self.page().networkAccessManager()
         newManager = NetworkAccessManager(oldManager, self)
@@ -22,5 +21,4 @@ class FtpView(QtWebKit.QWebView):
         self.urlChanged.connect(self.updateWindowTitle)
 
     def updateWindowTitle(self, url):
-        print("FtpView.updateWindowTitle")
         self.setWindowTitle("FTP Client - %s" % url.toString())

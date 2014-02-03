@@ -7,7 +7,6 @@ class NetworkAccessManager(QtNetwork.QNetworkAccessManager):
 
     def __init__(self, manager, parent):
         super(NetworkAccessManager, self).__init__(parent)
-        print("NetworkAccessManager.init")
 
         self.setCache(manager.cache())
         self.setCookieJar(manager.cookieJar())
@@ -15,7 +14,6 @@ class NetworkAccessManager(QtNetwork.QNetworkAccessManager):
         self.setProxyFactory(manager.proxyFactory())
 
     def createRequest(self, operation, request, device):
-        print("NetworkAccessManager.createRequest")
         if request.url().scheme() != "ftp":
             return QtNetwork.QNetworkAccessManager.createRequest(self, operation, request, device)
 

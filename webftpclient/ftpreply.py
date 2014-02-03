@@ -6,7 +6,6 @@ class FtpReply(QtNetwork.QNetworkReply):
 
     def __init__(self, url, parent):
         super(FtpReply, self).__init__(parent)
-        print("FtpReply.init")
 
         self.items = []
         self.content = ""
@@ -23,7 +22,6 @@ class FtpReply(QtNetwork.QNetworkReply):
         self.ftp.connectToHost(url.host())
 
     def processCommand(self, _, err):
-        print("FtpReply.processCommand")
 
         if err:
             self.setError(QtNetwork.QNetworkReply.NetworkError.ContentNotFoundError, "Unknown command")
@@ -43,15 +41,12 @@ class FtpReply(QtNetwork.QNetworkReply):
             self.setContent()
 
     def processListInfo(self, urlInfo):
-        print("FtpReply.processListInfo")
         self.items.append(QtNetwork.QUrlInfo(urlInfo))
 
     def processData(self):
-        print("FtpReply.processData")
         self.content += self.ftp.readAll()
 
     def setContent(self):
-        print("FtpReply.setContent")
         self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
         self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
         self.readyRead.emit()
@@ -59,7 +54,6 @@ class FtpReply(QtNetwork.QNetworkReply):
         self.ftp.close()
 
     def setListContent(self):
-        print("FtpReply.setListContent")
         u = self.url()
         if not u.path().endswith("/"):
             u.setPath(u.path() + "/")
@@ -129,19 +123,15 @@ class FtpReply(QtNetwork.QNetworkReply):
         self.ftp.close()
 
     def abort(self):
-        print("FtpReply.abort")
         pass
 
     def bytesAvailable(self):
-        print("FtpReply.bytesAvailable")
         return len(self.content) - self.offset
 
     def isSequential(self):
-        print("FtpReply.isSequential")
         return True
 
     def readData(self, maxSize):
-        print("FtpReply.readData")
         if self.offset < len(self.content):
             number = min(maxSize, len(self.content) - self.offset)
             data = self.content[self.offset:number]

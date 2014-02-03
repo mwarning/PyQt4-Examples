@@ -6,7 +6,6 @@ class Downloader(QtCore.QObject):
 
     def __init__(self, parentWidget, manager):
         super(Downloader, self).__init__(parentWidget)
-        print("Downloader.init")
 
         self.manager = manager
         self.reply = None
@@ -15,7 +14,6 @@ class Downloader(QtCore.QObject):
         self.parentWidget = parentWidget
 
     def chooseSaveFile(self, url):
-        print("Downloader.chooseSaveFile")
         fileName = url.path().split("/").last()
         if not path.isEmpty():
             fileName = QDir(path).filePath(fileName)
@@ -23,14 +21,12 @@ class Downloader(QtCore.QObject):
         return QtCore.QFileDialog.getSaveFileName(self.parentWidget, u"Save File", fileName);
 
     def startDownload(self, request):
-        print("Downloader.startDownload")
         self.downloads[request.url().toString()] = self.chooseSaveFile(request.url())
 
         reply = self.manager.get(request)
         reply.finished.connect(self.finishDownload())
 
     def saveFile(self, reply):
-        print("Downloader.saveFile")
         newPath = self.downloads[reply.url().toString()]
 
         if newPath.isEmpty():
@@ -47,7 +43,6 @@ class Downloader(QtCore.QObject):
                 QtCore.QMessageBox.warning(parentWidget, u"Download Failed", u"Failed to save the file.")
 
     def finishDownload(self):
-        print("Downloader.finishDownload")
         reply = self.sender()
         self.saveFile(reply)
         self.downloads.remove(reply.url().toString())
