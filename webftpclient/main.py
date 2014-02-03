@@ -10,15 +10,15 @@ from ftpview import FtpView
 
 
 def main():
-	app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
 
-	view = FtpView()
-	view.setUrl(QtCore.QUrl(u"ftp://ftp.qt.nokia.com"))
-	view.show()
+    view = FtpView()
+    view.setUrl(QtCore.QUrl(u"ftp://ftp.qt.nokia.com"))
+    view.show()
 
-	sys.exit(app.exec_())
+    sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
-	main()
+    main()
 
