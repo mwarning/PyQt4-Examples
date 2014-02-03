@@ -1,9 +1,8 @@
 
-from PyQt4.QtCore import *
-from PyQt4.QtNetwork import *
+from PyQt4 import QtCore, QtNetwork
 
 
-class FtpReply(QNetworkReply):
+class FtpReply(QtNetwork.QNetworkReply):
 
 	def __init__(self, url, parent):
 		super(FtpReply, self).__init__(parent)
@@ -12,7 +11,7 @@ class FtpReply(QNetworkReply):
 		self.items = []
 		self.content = ""
 
-		self.ftp = QFtp(self)
+		self.ftp = QtNetwork.QFtp(self)
 		self.ftp.listInfo.connect(self.processListInfo)
 		self.ftp.readyRead.connect(self.processData)
 		self.ftp.commandFinished.connect(self.processCommand)
@@ -27,25 +26,25 @@ class FtpReply(QNetworkReply):
 		print("FtpReply.processCommand")
 
 		if err:
-			self.setError(QNetworkReply.NetworkError.ContentNotFoundError, "Unknown command")
-			self.error.emit(QNetworkReply.NetworkError.ContentNotFoundError)
+			self.setError(QtNetwork.QNetworkReply.NetworkError.ContentNotFoundError, "Unknown command")
+			self.error.emit(QtNetwork.QNetworkReply.NetworkError.ContentNotFoundError)
 
 		cmd = self.ftp.currentCommand()
-		if cmd == QFtp.ConnectToHost:
+		if cmd == QtNetwork.QFtp.ConnectToHost:
 			self.ftp.login()
-		elif cmd == QFtp.Login:
+		elif cmd == QtNetwork.QFtp.Login:
 			self.ftp.list(self.url().path())
-		elif cmd == QFtp.List:
+		elif cmd == QtNetwork.QFtp.List:
 			if len(self.items) == 1:
 				self.ftp.get(url().path())
 			else:
 				self.setListContent()
-		elif cmd == QFtp.Get:
+		elif cmd == QtNetwork.QFtp.Get:
 			self.setContent()
 
 	def processListInfo(self, urlInfo):
 		print("FtpReply.processListInfo")
-		self.items.append(QUrlInfo(urlInfo))
+		self.items.append(QtNetwork.QUrlInfo(urlInfo))
 
 	def processData(self):
 		print("FtpReply.processData")
@@ -53,8 +52,8 @@ class FtpReply(QNetworkReply):
 
 	def setContent(self):
 		print("FtpReply.setContent")
-		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
-		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
+		self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
+		self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
 		self.readyRead.emit()
 		self.finished.emit()
 		self.ftp.close()
@@ -68,7 +67,7 @@ class FtpReply(QNetworkReply):
 		base_url = self.url().toString()
 		base_path = u.path()
 
-		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
+		self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
 		content = (
 			u'<html>\n'
 			'<head>\n'
@@ -83,9 +82,9 @@ class FtpReply(QNetworkReply):
 			'<body>\n'
 			'<h1>Listing for %s</h1>\n\n'
 			'<table align="center" cellspacing="0" width="90%%">\n'
-			'<tr><th>Name</th><th>Size</th></tr>\n' % (Qt.escape(base_url), base_path))
+			'<tr><th>Name</th><th>Size</th></tr>\n' % (QtCore.Qt.escape(base_url), base_path))
 
-		parent = u.resolved(QUrl(".."))
+		parent = u.resolved(QtCore.QUrl(".."))
 
 		if parent.isParentOf(u):
 			content += (u'<tr><td><strong><a href="%s">' % parent.toString()
@@ -93,14 +92,14 @@ class FtpReply(QNetworkReply):
 
 		i = 0
 		for item in self.items:
-			child = u.resolved(QUrl(item.name()))
+			child = u.resolved(QtCore.QUrl(item.name()))
 
 			if i == 0:
 				content += u'<tr class="odd">'
 			else:
 				content += u'<tr class="even">'
 
-			content += u'<td><a href="%s">%s</a></td>' % (child.toString(),  Qt.escape(item.name()))
+			content += u'<td><a href="%s">%s</a></td>' % (child.toString(), QtCore.Qt.escape(item.name()))
 
 			size = item.size()
 			unit = 0
@@ -123,8 +122,8 @@ class FtpReply(QNetworkReply):
 
 		self.content = content.encode('utf-8')
 
-		self.setHeader(QNetworkRequest.ContentTypeHeader, QVariant("text/html; charset=UTF-8"))
-		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
+		self.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, QtCore.QVariant("text/html; charset=UTF-8"))
+		self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QtCore.QVariant(len(self.content)))
 		self.readyRead.emit()
 		self.finished.emit()
 		self.ftp.close()

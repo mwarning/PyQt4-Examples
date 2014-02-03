@@ -1,11 +1,9 @@
 
-from PyQt4.QtCore import *
-from PyQt4.QtNetwork import *
-from PyQt4.QtWebKit import *
+from PyQt4 import QtNetwork
 from ftpreply import FtpReply
 
 
-class NetworkAccessManager(QNetworkAccessManager):
+class NetworkAccessManager(QtNetwork.QNetworkAccessManager):
 	
 	def __init__(self, manager, parent):
 		super(NetworkAccessManager, self).__init__(parent)
@@ -19,10 +17,10 @@ class NetworkAccessManager(QNetworkAccessManager):
 	def createRequest(self, operation, request, device):
 		print("NetworkAccessManager.createRequest")
 		if request.url().scheme() != "ftp":
-			return QNetworkAccessManager.createRequest(self, operation, request, device)
+			return QtNetwork.QNetworkAccessManager.createRequest(self, operation, request, device)
 
-		if operation == QNetworkAccessManager.GetOperation:
+		if operation == QtNetwork.QNetworkAccessManager.GetOperation:
 			# Handle ftp:// URLs separately by creating custom QNetworkReply objects.
 			return FtpReply(request.url(), self)
 		else:
-			return QNetworkAccessManager.createRequest(self, operation, request, device)
+			return QtNetwork.QNetworkAccessManager.createRequest(self, operation, request, device)

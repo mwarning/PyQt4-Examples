@@ -1,11 +1,10 @@
 
+from PyQt4 import QtWebKit
 from downloader import Downloader
 from networkaccessmanager import NetworkAccessManager
-from PyQt4.QtCore import *
-from PyQt4.QtWebKit import *
 
 
-class FtpView(QWebView):
+class FtpView(QtWebKit.QWebView):
 	def __init__(self):
 		super(FtpView, self).__init__()
 		print("FtpView.init")

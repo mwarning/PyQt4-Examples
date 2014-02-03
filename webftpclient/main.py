@@ -5,17 +5,15 @@ import sip
 sip.setapi("QString", 2)
 
 import sys
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from PyQt4.QtWebKit import *
+from PyQt4 import QtCore, QtGui
 from ftpview import FtpView
 
 
 def main():
-	app = QApplication(sys.argv)
+	app = QtGui.QApplication(sys.argv)
 
 	view = FtpView()
-	view.setUrl(QUrl(u"ftp://ftp.qt.nokia.com"))
+	view.setUrl(QtCore.QUrl(u"ftp://ftp.qt.nokia.com"))
 	view.show()
 
 	sys.exit(app.exec_())
