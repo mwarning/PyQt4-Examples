@@ -5,13 +5,10 @@ import sip
 sip.setapi("QString", 2)
 
 import sys
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from PyQt4.QtWebKit import *
-from PyQt4.QtNetwork import *
+from PyQt4 import QtGui, QtCore, QtNetwork, QtWebKit
 
 
-class NetworkReply(QNetworkReply):
+class NetworkReply(QtNetwork.QNetworkReply):
 
 	def __init__(self, url, parent):
 		super(NetworkReply, self).__init__(parent)
@@ -22,7 +19,7 @@ class NetworkReply(QNetworkReply):
 
 		self.setUrl(url)
 
-		timer = QTimer(self)
+		timer = QtCore.QTimer(self)
 		timer.timeout.connect(self.setContent)
 		timer.start(1000)
 
@@ -35,9 +32,9 @@ class NetworkReply(QNetworkReply):
 		content += u'</body></html>'
 
 		self.content = content.encode('utf-8')
-		self.open(QIODevice.ReadOnly | QIODevice.Unbuffered)
-		self.setHeader(QNetworkRequest.ContentTypeHeader, QVariant("text/html; charset=UTF-8"))
-		self.setHeader(QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
+		self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
+		self.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, QtCore.QVariant("text/html; charset=UTF-8"))
+		self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QtCore.QVariant(len(self.content)))
 		self.readyRead.emit()
 		self.finished.emit()
 
@@ -63,7 +60,7 @@ class NetworkReply(QNetworkReply):
 		return None
 
 
-class NetworkAccessManager(QNetworkAccessManager):
+class NetworkAccessManager(QtNetwork.QNetworkAccessManager):
 
 	def __init__(self, manager, parent):
 		super(NetworkAccessManager, self).__init__(parent)
@@ -77,13 +74,13 @@ class NetworkAccessManager(QNetworkAccessManager):
 	def createRequest(self, operation, request, device):
 		print("NetworkAccessManager.createRequest")
 
-		if operation == QNetworkAccessManager.GetOperation:
+		if operation == QtNetwork.QNetworkAccessManager.GetOperation:
 			return NetworkReply(request.url(), self)
 		else:
-			return QNetworkAccessManager.createRequest(self, operation, request, device)
+			return QtNetwork.QNetworkAccessManager.createRequest(self, operation, request, device)
 
 
-class WebView(QWebView):
+class WebView(QtWebKit.QWebView):
 	def __init__(self):
 		super(WebView, self).__init__()
 		print("WebView.init")
@@ -102,10 +99,10 @@ class WebView(QWebView):
 
 
 def main():
-	app = QApplication(sys.argv)
+	app = QtGui.QApplication(sys.argv)
 
 	view = WebView()
-	view.setUrl(QUrl(u"foo://some_dummy_url"))
+	view.setUrl(QtCore.QUrl(u"foo://some_dummy_url"))
 	view.show()
 
 	sys.exit(app.exec_())
