@@ -28,7 +28,7 @@ class NetworkReply(QtNetwork.QNetworkReply):
 
         content = u'<html><head><title>Test</title></head><body>'
         for i in range(0, 100):
-            content += 'number %s<br>' % i
+            content += 'number %s of %s<br>' % (i, 100)
         content += u'</body></html>'
 
         self.content = content.encode('utf-8')
