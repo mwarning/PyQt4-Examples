@@ -2,17 +2,22 @@
 #define MAIN_H
 
 #include <QtGui>
-#include <QFileDialog>
-#include <QMessageBox>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QtNetwork>
 #include <QNetworkAccessManager>
+#include <QtWebKit/QtWebKit>
+#if QT_VERSION >= 0x050200
+#include <QtWebKitWidgets/QtWebKitWidgets>
+#include <QtWebKitWidgets/QWebView>
+#else
 #include <QWebView>
-#include <QDir>
-#include <QHash>
+#include <QWebFrame>
+#include <QWebPage>
+#endif
 #include <QObject>
 #include <QUrl>
+
 
 class NetworkReply : public QNetworkReply
 {

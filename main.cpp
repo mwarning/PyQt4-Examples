@@ -1,17 +1,3 @@
-#include <QtGui>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QtNetwork>
-#include <QNetworkAccessManager>
-#include <QWebView>
-#include <QDir>
-#include <QHash>
-#include <QObject>
-#include <QUrl>
-#include <QWebFrame>
-#include <QWebPage>
 
 #include <iostream>
 
