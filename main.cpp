@@ -135,8 +135,7 @@ void WebView::updateWindowTitle(const QUrl &url)
 void WebView::onLoadFinish()
 {
 	qDebug("onLoadFinish");
-	
-	if(page()->currentFrame()->toPlainText().toUtf8() == createHtmlPage()) {
+	if(page()->currentFrame()->toHtml().toUtf8() == createHtmlPage()) {
 		qDebug("Success");
 		//QCoreApplication::exit(0);
 	} else {
