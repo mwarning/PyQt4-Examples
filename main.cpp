@@ -21,10 +21,7 @@ NetworkReply::NetworkReply(const QUrl &url)
 {
 	qDebug("NetworkReply.init");
 	
-	QTimer *timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()),
-            this, SLOT(setContent()));
-	timer->start(1000);
+	QTimer::singleShot(1000, this, SLOT(setContent()));
 	
     offset = 0;
     setUrl(url);
@@ -40,9 +37,8 @@ void NetworkReply::setContent()
 	setHeader(QNetworkRequest::ContentTypeHeader, QVariant("text/html; charset=UTF-8"));
 	setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
 	emit metaDataChanged();
-	emit readyRead();
-	QCoreApplication::processEvents();
-	emit finished();
+	QTimer::singleShot(0, this, SLOT(readyRead()));
+	QTimer::singleShot(0, this, SLOT(finished()));
 }
 
 void NetworkReply::abort()
