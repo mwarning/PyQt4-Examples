@@ -35,7 +35,10 @@ class NetworkReply(QtNetwork.QNetworkReply):
         self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
         self.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, QtCore.QVariant("text/html; charset=UTF-8"))
         self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QtCore.QVariant(len(self.content)))
+
+        self.metaDataChanged.emit()
         self.readyRead.emit()
+        QtCore.QCoreApplication.processEvents()
         self.finished.emit()
 
     def abort(self):
