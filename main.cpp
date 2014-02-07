@@ -36,9 +36,10 @@ void NetworkReply::setContent()
 	open(ReadOnly | Unbuffered);
 	setHeader(QNetworkRequest::ContentTypeHeader, QVariant("text/html; charset=UTF-8"));
 	setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
+
 	emit metaDataChanged();
-	QTimer::singleShot(0, this, SLOT(readyRead()));
-	QTimer::singleShot(0, this, SLOT(finished()));
+	QTimer::singleShot(0, this, SLOT(readyRead())); //emit readyRead();
+	QTimer::singleShot(0, this, SLOT(finished())); //emit finished();
 }
 
 void NetworkReply::abort()
