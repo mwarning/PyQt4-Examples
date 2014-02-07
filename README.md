@@ -1,4 +1,3 @@
-
 Test case for https://bugreports.qt-project.org/browse/QTBUG-27469
 
 The test case works for revision 9d6c186f418ea77f202404408aa6692805038bea,
@@ -10,8 +9,11 @@ git clone git://gitorious.org/qt/qt.git
 git checkout <revison>
 ```
 
-The following stack traces are for the calls of NetworkReply::readData() in main.cpp.
+---
 
+The following stack traces are for the calls of NetworkReply::readData() in main.cpp:
+
+--
 
 Stack trace for the good version (9d6c18..). readData is called once.
 
@@ -54,6 +56,8 @@ Breakpoint 1, NetworkReply::readData (this=0x48b110, data=0x533908 "\340\070S", 
 #24 0x00007ffff58cffc2 in QApplication::exec () at kernel/qapplication.cpp:3756
 #25 0x00000000004053a3 in main (argc=1, argv=0x7fffffffe3c8) at main.cpp:143
 ```
+
+--
 
 Stack traces for the bad version (6d09a6..). readData is called twice.
 
