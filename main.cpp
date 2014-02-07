@@ -36,11 +36,13 @@ void NetworkReply::setContent()
 	
 	this->content = createHtmlPage();
 	
-    open(ReadOnly | Unbuffered);
+	open(ReadOnly | Unbuffered);
 	setHeader(QNetworkRequest::ContentTypeHeader, QVariant("text/html; charset=UTF-8"));
-    setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
-    emit readyRead();
-    emit finished();
+	setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
+	emit metaDataChanged();
+	emit readyRead();
+	QCoreApplication::processEvents();
+	emit finished();
 }
 
 void NetworkReply::abort()
