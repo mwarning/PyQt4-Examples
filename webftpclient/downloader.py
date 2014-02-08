@@ -84,5 +84,5 @@ class Downloader(QtCore.QObject):
     def finishDownload(self):
         reply = self.sender()
         self.saveFile(reply)
-        self.downloads.remove(reply.url().toString())
+        del self.downloads[reply.url().toString()]
         reply.deleteLater()
