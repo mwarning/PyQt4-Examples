@@ -126,7 +126,7 @@ class FtpReply(QtNetwork.QNetworkReply):
         pass
 
     def bytesAvailable(self):
-        return len(self.content) - self.offset
+        return len(self.content) - self.offset + QtNetwork.QNetworkReply.bytesAvailable(self)
 
     def isSequential(self):
         return True
