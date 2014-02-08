@@ -38,7 +38,6 @@ class NetworkReply(QtNetwork.QNetworkReply):
 
         self.metaDataChanged.emit()
         self.readyRead.emit()
-        QtCore.QCoreApplication.processEvents()
         self.finished.emit()
 
     def abort(self):
@@ -46,8 +45,8 @@ class NetworkReply(QtNetwork.QNetworkReply):
         pass
 
     def bytesAvailable(self):
-        print("NetworkReply.bytesAvailable: {}".format(len(self.content) - self.offset))
-        return len(self.content) - self.offset
+        print("NetworkReply.bytesAvailable")
+        return len(self.content) - self.offset + QtNetwork.QNetworkReply.bytesAvailable(self)
 
     def isSequential(self):
         print("NetworkReply.isSequential")
