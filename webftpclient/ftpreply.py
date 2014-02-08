@@ -63,8 +63,8 @@ class FtpReply(QtNetwork.QNetworkReply):
     def processCommand(self, _, err):
 
         if err:
-            self.setError(QtNetwork.QNetworkReply.NetworkError.ContentNotFoundError, "Unknown command")
-            self.error.emit(QtNetwork.QNetworkReply.NetworkError.ContentNotFoundError)
+            self.setError(QtNetwork.QNetworkReply.ContentNotFoundError, "Unknown command")
+            self.error.emit(QtNetwork.QNetworkReply.ContentNotFoundError)
 
         cmd = self.ftp.currentCommand()
         if cmd == QtNetwork.QFtp.ConnectToHost:
@@ -73,7 +73,7 @@ class FtpReply(QtNetwork.QNetworkReply):
             self.ftp.list(self.url().path())
         elif cmd == QtNetwork.QFtp.List:
             if len(self.items) == 1:
-                self.ftp.get(url().path())
+                self.ftp.get(self.url().path())
             else:
                 self.setListContent()
         elif cmd == QtNetwork.QFtp.Get:
@@ -87,7 +87,7 @@ class FtpReply(QtNetwork.QNetworkReply):
 
     def setContent(self):
         self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
-        self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QVariant(len(self.content)))
+        self.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, QtCore.QVariant(len(self.content)))
         self.readyRead.emit()
         self.finished.emit()
         self.ftp.close()
