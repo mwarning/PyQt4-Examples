@@ -50,7 +50,7 @@ void NetworkReply::abort()
 qint64 NetworkReply::bytesAvailable() const
 {
 	qDebug("NetworkReply.bytesAvailable: %lli", content.size() - offset);
-    return content.size() - offset;
+    return content.size() - offset + QIODevice::bytesAvailable();
 }
 
 bool NetworkReply::isSequential() const
