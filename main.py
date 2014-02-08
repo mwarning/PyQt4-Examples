@@ -56,7 +56,7 @@ class NetworkReply(QtNetwork.QNetworkReply):
         print("NetworkReply.readData")
         if self.offset < len(self.content):
             number = min(maxSize, len(self.content) - self.offset)
-            data = self.content[self.offset:number]
+            data = self.content[self.offset:self.offset+number]
             self.offset += number
             return data
         return None
