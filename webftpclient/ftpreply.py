@@ -83,7 +83,7 @@ class FtpReply(QtNetwork.QNetworkReply):
         self.items.append(QtNetwork.QUrlInfo(urlInfo))
 
     def processData(self):
-        self.content += self.ftp.readAll()
+        self.content += str(self.ftp.readAll())
 
     def setContent(self):
         self.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Unbuffered)
