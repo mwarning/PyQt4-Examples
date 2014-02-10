@@ -63,7 +63,7 @@ class Downloader(QtCore.QObject):
         self.downloads[request.url().toString()] = self.chooseSaveFile(request.url())
 
         reply = self.manager.get(request)
-        reply.finished.connect(self.finishDownload())
+        reply.finished.connect(self.finishDownload)
 
     def saveFile(self, reply):
         newPath = self.downloads.get(reply.url().toString())
@@ -84,5 +84,5 @@ class Downloader(QtCore.QObject):
     def finishDownload(self):
         reply = self.sender()
         self.saveFile(reply)
-        del self.downloads[reply.url().toString()]
+        self.downloads.pop(reply.url().toString(), None)
         reply.deleteLater()
