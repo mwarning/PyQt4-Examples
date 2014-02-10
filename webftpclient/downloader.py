@@ -38,7 +38,7 @@
 **
 ****************************************************************************'''
 
-from PyQt4 import QtCore, QtNetwork, QtWebKit
+from PyQt4 import QtCore, QtGui, QtNetwork, QtWebKit
 
 
 class Downloader(QtCore.QObject):
@@ -53,11 +53,11 @@ class Downloader(QtCore.QObject):
         self.parentWidget = parentWidget
 
     def chooseSaveFile(self, url):
-        fileName = url.path().split("/").last()
-        if not path.isEmpty():
+        fileName = url.path().split("/")[-1]
+        if len(self.path) != 0:
             fileName = QDir(path).filePath(fileName)
 
-        return QtCore.QFileDialog.getSaveFileName(self.parentWidget, u"Save File", fileName);
+        return QtGui.QFileDialog.getSaveFileName(self.parentWidget, u"Save File", fileName);
 
     def startDownload(self, request):
         self.downloads[request.url().toString()] = self.chooseSaveFile(request.url())
@@ -66,20 +66,20 @@ class Downloader(QtCore.QObject):
         reply.finished.connect(self.finishDownload())
 
     def saveFile(self, reply):
-        newPath = self.downloads[reply.url().toString()]
+        newPath = self.downloads.get(reply.url().toString())
 
-        if newPath.isEmpty():
+        if not newPath:
             newPath = self.chooseSaveFile(reply.url())
 
-        if not newPath.isEmpty():
-            file = QFile(newPath)
-            if file.open(QIODevice.WriteOnly):
+        if len(newPath) != 0:
+            file = QtCore.QFile(newPath)
+            if file.open(QtCore.QIODevice.WriteOnly):
                 file.write(reply.readAll())
                 file.close()
-                path = QDir(newPath).dirName()
-                QtCore.QMessageBox.information(parentWidget, u"Download Completed", u"Saved '%s'." % newPath)
+                path = QtCore.QDir(newPath).dirName()
+                QtGui.QMessageBox.information(self.parentWidget, u"Download Completed", u"Saved '%s'." % newPath)
             else:
-                QtCore.QMessageBox.warning(parentWidget, u"Download Failed", u"Failed to save the file.")
+                QtGui.QMessageBox.warning(self.parentWidget, u"Download Failed", u"Failed to save the file.")
 
     def finishDownload(self):
         reply = self.sender()
