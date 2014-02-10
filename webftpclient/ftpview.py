@@ -61,3 +61,8 @@ class FtpView(QtWebKit.QWebView):
 
     def updateWindowTitle(self, url):
         self.setWindowTitle("FTP Client - %s" % url.toString())
+
+    def createWindow(self, _):
+        newview = FtpView()
+        newview.show()
+        return newview
